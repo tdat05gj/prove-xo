@@ -343,8 +343,8 @@ function autoLeaveRoom() {
     startListenMatches();
 }
 
+// Each player loses 0.1 prove when entering a match
 async function enterMatch() {
-    // Always get the latest user data from Firestore
     let userSnap = await db.collection('users').doc(userId).get();
     let user = userSnap.data() || {};
     if ((user.prove || 0) < 0.1) {
@@ -360,20 +360,20 @@ async function enterMatch() {
     return true;
 }
 
-// When match ends, update total games for both, and wins for the winner
+// Winner gets +0.2 prove, loser gets nothing (already lost 0.1 when entering)
 async function handleWinLose(isX) {
     let match = await db.collection('matches').doc(matchId).get();
     let data = match.data();
     let winnerId = isX ? data.playerX : data.playerO;
     let loserId = isX ? data.playerO : data.playerX;
 
-    // Update winner
+    // Update winner (+0.2 prove)
     if (winnerId) {
         let winnerSnap = await db.collection('users').doc(winnerId).get();
         let winner = winnerSnap.data() || {};
         let newWins = (winner.totalWins || 0) + 1;
         let newGames = (winner.totalGames || 0) + 1;
-        let newProve = +(winner.prove || 0) + 0.1;
+        let newProve = +(winner.prove || 0) + 0.2;
         await saveUserData(
             winnerId,
             '',
@@ -391,7 +391,7 @@ async function handleWinLose(isX) {
         }
     }
 
-    // Update loser
+    // Update loser (prove unchanged)
     if (loserId) {
         let loserSnap = await db.collection('users').doc(loserId).get();
         let loser = loserSnap.data() || {};
@@ -412,7 +412,7 @@ async function handleWinLose(isX) {
     }
 }
 
-// If draw, update total games for both
+// Draw: only update total games, no prove change
 async function handleDraw() {
     let match = await db.collection('matches').doc(matchId).get();
     let data = match.data();
