@@ -1,0 +1,173 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+body {
+    font-family: 'Inter', Arial, sans-serif;
+    color: #fff;
+    margin: 0;
+    min-height: 100vh;
+    transition: background 0.5s;
+}
+
+h1 {
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-align: center;
+    margin-top: 32px;
+    color: #fff;
+}
+
+#login-area, #game-area {
+    max-width: 600px;
+    margin: 32px auto;
+    background: rgba(30, 41, 59, 0.95);
+    border-radius: 18px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    padding: 32px 24px;
+    transition: box-shadow 0.3s;
+}
+
+input, button {
+    font-family: inherit;
+    font-size: 1rem;
+    padding: 10px 18px;
+    border-radius: 8px;
+    border: none;
+    margin: 8px 0;
+    outline: none;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+
+input {
+    background: #1e293b;
+    color: #fff;
+    border: 1px solid #334155;
+}
+
+button {
+    background: linear-gradient(90deg, #00c6ff 0%, #0072ff 100%);
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+button:disabled {
+    background: #334155;
+    color: #888;
+    cursor: not-allowed;
+}
+button:hover:not(:disabled) {
+    background: linear-gradient(90deg, #0072ff 0%, #00c6ff 100%);
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+}
+
+#user-info {
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+    color: #38bdf8;
+    font-weight: 600;
+}
+
+#status {
+    margin: 12px 0 8px 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #fbbf24;
+    min-height: 24px;
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(16, 32px);
+    grid-template-rows: repeat(16, 32px);
+    gap: 2px;
+    margin: 20px 0;
+    background: #1e293b;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    padding: 8px;
+    overflow-x: auto;
+}
+
+.cell {
+    width: 32px;
+    height: 32px;
+    background: #334155;
+    color: #fff;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background 0.2s, transform 0.1s;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.cell:hover {
+    background: #38bdf8;
+    color: #0f172a;
+    transform: scale(1.08);
+}
+.cell.X {
+    color: #f472b6;
+    text-shadow: 0 0 6px #f472b6aa;
+    animation: pop 0.2s;
+}
+.cell.O {
+    color: #38bdf8;
+    text-shadow: 0 0 6px #38bdf8aa;
+    animation: pop 0.2s;
+}
+@keyframes pop {
+    0% { transform: scale(0.7);}
+    80% { transform: scale(1.15);}
+    100% { transform: scale(1);}
+}
+
+#available-matches button {
+    margin-right: 8px;
+    margin-bottom: 8px;
+}
+
+#leave-room {
+    background: linear-gradient(90deg, #f43f5e 0%, #fbbf24 100%);
+    color: #fff;
+    margin-top: 12px;
+    font-weight: 600;
+}
+#leave-room:hover {
+    background: linear-gradient(90deg, #fbbf24 0%, #f43f5e 100%);
+    color: #fff;
+}
+
+
+body.theme-pink {
+    background: linear-gradient(135deg, #f472b6 0%, #be185d 100%);
+}
+body.theme-blue {
+    background: linear-gradient(135deg, #0f2027 0%, #38bdf8 100%);
+}
+body.theme-green {
+    background: linear-gradient(135deg, #22c55e 0%, #166534 100%);
+}
+body.theme-orange {
+    background: linear-gradient(135deg, #fbbf24 0%, #f97316 100%);
+}
+body.theme-purple {
+    background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%);
+}
+
+.theme-pink .board { background: #f9a8d4; }
+.theme-blue .board { background: #bae6fd; }
+.theme-green .board { background: #bbf7d0; }
+.theme-orange .board { background: #fde68a; }
+.theme-purple .board { background: #ddd6fe; }
+
+.theme-pink .cell:hover { background: #be185d; color: #fff; }
+.theme-blue .cell:hover { background: #0ea5e9; color: #fff; }
+.theme-green .cell:hover { background: #22c55e; color: #fff; }
+.theme-orange .cell:hover { background: #f59e42; color: #fff; }
+.theme-purple .cell:hover { background: #a78bfa; color: #fff; }

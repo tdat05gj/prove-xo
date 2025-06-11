@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Prove XO </title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Prove XO </h1>
+    <div id="login-area">
+        <input id="username" placeholder="Username..." />
+        <div style="margin: 10px 0;">
+            <label>Select Team:</label>
+                 
+            <select id="theme-select">
+                <option value="pink">Pink</option>
+                <option value="blue" selected>Blue</option>
+                <option value="green">Green</option>
+                <option value="orange">Orange</option>
+                <option value="purple">Purple</option>
+            </select>
+        </div>
+        <button id="connect-wallet">Connect Wallet</button>
+        <div id="wallet-address"></div>
+        <button id="login-btn" disabled>Join </button>
+    </div>
+    <div id="game-area" style="display:none;">
+        <div id="user-info"></div>
+        <div>
+            <button id="find-match">Find Game </button>
+            <div id="available-matches"></div>
+        </div>
+        <div id="status"></div>
+        <div id="turn-timer" style="font-weight:bold;margin-bottom:8px;"></div>
+        <div id="board" class="board"></div>
+        <button id="leave-room" style="display:none;">Leave Room</button>
+    </div>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script src="firestore.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
