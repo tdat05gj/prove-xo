@@ -6,8 +6,6 @@ const availableMatchesDiv = document.getElementById('available-matches');
 const gameArea = document.getElementById('game-area');
 const loginArea = document.getElementById('login-area');
 const loginBtn = document.getElementById('login-btn');
-const connectWalletBtn = document.getElementById('connect-wallet');
-const walletAddressDiv = document.getElementById('wallet-address');
 const usernameInput = document.getElementById('username');
 const userInfoDiv = document.getElementById('user-info');
 const leaveRoomBtn = document.getElementById('leave-room');
@@ -16,7 +14,6 @@ const themeSelect = document.getElementById('theme-select');
 const BOARD_SIZE = 16;
 let userId = null;
 let username = '';
-let walletAddress = '';
 let prove = 0;
 let matchId = null;
 let matchData = null;
@@ -49,15 +46,14 @@ function applyTheme(theme) {
 window.onload = async () => {
     const savedTheme = localStorage.getItem('theme');
     const savedUsername = localStorage.getItem('username');
-    const savedWallet = localStorage.getItem('walletAddress');
     if (savedTheme) {
         theme = savedTheme;
         themeSelect.value = theme;
         applyTheme(theme);
     }
-    if (savedUsername && savedWallet) {
+    if (savedUsername) {
         username = savedUsername;
-        userId = savedWallet;
+        userId = username;
         let user = await getUserData(userId);
         if (user) {
             prove = user.prove;
@@ -73,45 +69,34 @@ window.onload = async () => {
     }
 };
 
-connectWalletBtn.onclick = async () => {
-    if (window.ethereum) {
-        try {
-            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-            walletAddress = accounts[0];
-            walletAddressDiv.textContent = "Wallet: " + walletAddress;
-            if (usernameInput.value) loginBtn.disabled = false;
-        } catch (e) {
-            alert('Failed to connect wallet!');
-        }
-    } else {
-        alert('Please install MetaMask to use this feature!');
-    }
-};
 usernameInput.oninput = () => {
-    if (usernameInput.value && walletAddress) loginBtn.disabled = false;
-    else loginBtn.disabled = true;
+    loginBtn.disabled = !usernameInput.value.trim();
 };
 
 loginBtn.onclick = async () => {
     username = usernameInput.value.trim();
-    userId = walletAddress;
+    userId = username;
     theme = themeSelect.value;
+
+    // Check if username already exists
+    const snapshot = await db.collection('users')
+        .where('username', '==', username)
+        .get();
+
+    if (!snapshot.empty) {
+        alert('Username already exists. Please choose another one!');
+        return;
+    }
+
     localStorage.setItem('theme', theme);
     localStorage.setItem('username', username);
-    localStorage.setItem('walletAddress', walletAddress);
 
-    let user = await getUserData(userId);
-    if (!user) {
-        await saveUserData(userId, walletAddress, 66, theme, 0, 0, username);
-        prove = 66;
-        totalGames = 0;
-        totalWins = 0;
-    } else {
-        prove = user.prove;
-        totalGames = user.totalGames || 0;
-        totalWins = user.totalWins || 0;
-        if (user.theme) theme = user.theme;
-    }
+    // Create new user
+    await saveUserData(userId, '', 66, theme, 0, 0, username);
+    prove = 66;
+    totalGames = 0;
+    totalWins = 0;
+
     applyTheme(theme);
     loginArea.style.display = 'none';
     gameArea.style.display = '';
@@ -367,7 +352,7 @@ async function enterMatch() {
         return false;
     }
     let newProve = +(user.prove - 0.1).toFixed(2);
-    await saveUserData(userId, walletAddress, newProve, theme, user.totalGames || 0, user.totalWins || 0, username);
+    await saveUserData(userId, '', newProve, theme, user.totalGames || 0, user.totalWins || 0, username);
     prove = newProve;
     totalGames = user.totalGames || 0;
     totalWins = user.totalWins || 0;
@@ -391,7 +376,7 @@ async function handleWinLose(isX) {
         let newProve = +(winner.prove || 0) + 0.1;
         await saveUserData(
             winnerId,
-            winner.walletAddress,
+            '',
             +newProve.toFixed(2),
             winner.theme || theme,
             newGames,
@@ -413,7 +398,7 @@ async function handleWinLose(isX) {
         let newGames = (loser.totalGames || 0) + 1;
         await saveUserData(
             loserId,
-            loser.walletAddress,
+            '',
             loser.prove,
             loser.theme || theme,
             newGames,
@@ -436,7 +421,7 @@ async function handleDraw() {
     let newGamesX = (playerX.totalGames || 0) + 1;
     await saveUserData(
         data.playerX,
-        playerX.walletAddress,
+        '',
         playerX.prove,
         playerX.theme || theme,
         newGamesX,
@@ -453,7 +438,7 @@ async function handleDraw() {
         let newGamesO = (playerO.totalGames || 0) + 1;
         await saveUserData(
             data.playerO,
-            playerO.walletAddress,
+            '',
             playerO.prove,
             playerO.theme || theme,
             newGamesO,
