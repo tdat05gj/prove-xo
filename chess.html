@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chess </title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Firebase SDK -->
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.11.1/firebase-app-compat.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore-compat.js"></script>
+    <style>
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #ffe0f7 0%, #c1eaff 100%);
+        }
+        .header-flex {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            margin: 32px auto 8px auto;
+            max-width: 600px;
+        }
+        .header-flex img.logo-main {
+            max-width: 120px;
+            max-height: 120px;
+        }
+        .header-flex img.logo-small {
+            max-width: 48px;
+            max-height: 48px;
+        }
+        h1 {
+            margin: 0 0 0 12px;
+            font-size: 2.2rem;
+            color: #a21272;
+            letter-spacing: 2px;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        #user-info {
+            text-align: center;
+            font-size: 1.1rem;
+            color: #a21272;
+            font-weight: 600;
+            margin: 8px 0 12px 0;
+            text-shadow: 0 1px 4px #fff8;
+        }
+        #chess-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        #chess-controls input {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid #a21272;
+            font-size: 1rem;
+        }
+        #chess-controls button {
+            background: linear-gradient(90deg, #ff54d7 0%, #61c3ff 100%);
+            color: #fff;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 18px;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+            transition: background 0.2s;
+        }
+        #chess-controls button:hover {
+            background: linear-gradient(90deg, #61c3ff 0%, #ff54d7 100%);
+        }
+        .status {
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #a21272;
+        }
+        #chessboard {
+            margin: 0 auto 24px auto;
+            display: flex;
+            justify-content: center;
+        }
+        #menu-xo {
+            display: flex;
+            justify-content: center;
+            margin: 24px auto 0 auto;
+            width: fit-content;
+        }
+        #menu-xo button {
+            background: linear-gradient(90deg, #61c3ff 0%, #ff54d7 100%);
+            color: #fff;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 18px;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+            transition: background 0.2s;
+        }
+        #menu-xo button:hover {
+            background: linear-gradient(90deg, #ff54d7 0%, #61c3ff 100%);
+        }
+        /* Góc trang */
+        #corner-theme-img {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 72px;
+            height: auto;
+            z-index: 101;
+            opacity: 0.85;
+        }
+        /* Ảnh trang trí */
+        .corner-decor {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 72px;
+            height: auto;
+            z-index: 101;
+            opacity: 0.85;
+        }
+        .side-img {
+            position: fixed;
+            left: 16px;
+            top: 40%;
+            transform: translateY(-50%);
+            width: 64px;
+            height: auto;
+            z-index: 101;
+        }
+        .top-img {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            width: 64px;
+            height: auto;
+            z-index: 101;
+        }
+    </style>
+</head>
+<body>
+    <img src="sp1.png" alt="sp1" class="top-img">
+    <img src="cr1.webp" alt="cr1" class="side-img">
+    <img id="corner-theme-img" src="gpu-pink.png" alt="corner theme" class="corner-decor">
+
+    <div class="header-flex">
+         <img src="logo rmbgr.png" alt="Logo RMBGR" class="logo-small">
+        <h1>Prove Chess</h1>
+          <img src="cr.png" alt="Logo RMBGR" class="logo-main">
+            </div>
+
+    <div id="user-info"></div>
+
+    <div id="chess-controls">
+        <button id="chess-create">Create a room</button>
+        <button id="chess-join">Join</button>
+        <input id="chess-matchid" placeholder="ID ">
+    </div>
+
+    <div class="status" id="chess-status"></div>
+    <div id="chessboard"></div>
+
+    <a href="index.html" id="menu-xo"><button type="button">Tic Tac Toe</button></a>
+
+    <script type="module" src="app1.js"></script>
+</body>
+</html>
