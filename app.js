@@ -23,12 +23,12 @@ let theme = 'blue';
 let totalGames = 0;
 let totalWins = 0;
 
-// Timer for turn
+
 let turnTimer = null;
 let turnTimeLeft = 33;
 const TURN_TIME_LIMIT = 33;
 
-// Only allow one listener for match list
+
 let unsubscribeMatches = null;
 function startListenMatches() {
     if (unsubscribeMatches) unsubscribeMatches();
@@ -39,10 +39,21 @@ themeSelect.onchange = () => {
     theme = themeSelect.value;
     applyTheme(theme);
 };
+
 function applyTheme(theme) {
     document.body.classList.remove('theme-pink', 'theme-blue', 'theme-green', 'theme-orange', 'theme-purple');
     document.body.classList.add('theme-' + theme);
 }
+
+
+function showBoardImage() {
+    boardDiv.innerHTML = `
+       <div class="board1">
+            <img src="image.png" alt="Board Background" class="board-image">
+        </div>
+    `;
+}
+
 window.onload = async () => {
     const savedTheme = localStorage.getItem('theme');
     const savedUsername = localStorage.getItem('username');
@@ -67,6 +78,8 @@ window.onload = async () => {
             startListenMatches();
         }
     }
+    updateUserInfo();
+    showBoardImage();
 };
 
 usernameInput.oninput = () => {
@@ -78,7 +91,7 @@ loginBtn.onclick = async () => {
     userId = username;
     theme = themeSelect.value;
 
-    // Check if username already exists
+    
     const snapshot = await db.collection('users')
         .where('username', '==', username)
         .get();
@@ -91,7 +104,7 @@ loginBtn.onclick = async () => {
     localStorage.setItem('theme', theme);
     localStorage.setItem('username', username);
 
-    // Create new user
+    
     await saveUserData(userId, '', 66, theme, 0, 0, username);
     prove = 66;
     totalGames = 0;
@@ -102,12 +115,14 @@ loginBtn.onclick = async () => {
     gameArea.style.display = '';
     updateUserInfo();
     startListenMatches();
+    showBoardImage();
 };
 
 function updateUserInfo() {
     let winRate = totalGames > 0 ? ((totalWins / totalGames) * 100).toFixed(1) : '0';
     userInfoDiv.textContent = `User: ${username} | Prove: ${prove} | Games: ${totalGames} | Wins: ${totalWins} | Winrate: ${winRate}%`;
 }
+
 
 function renderBoard(board) {
     boardDiv.innerHTML = '';
@@ -130,7 +145,7 @@ function handleCellClick(index) {
     clearTurnTimer();
 
     matchData.board[index] = mySymbol;
-    if (checkWin(matchData.board, mySymbol)) {
+    if (checkWin(matchData.board, mySymbol, index)) {
         statusDisplay.textContent = `You (${mySymbol}) win!`;
         db.collection('matches').doc(matchId).update({ board: matchData.board, status: 'finished', winner: mySymbol });
         handleWinLose(mySymbol === 'X');
@@ -144,41 +159,44 @@ function handleCellClick(index) {
     }
 }
 
-function checkWin(board, player) {
-    for (let row = 0; row < BOARD_SIZE; row++) {
-        for (let col = 0; col <= BOARD_SIZE - 5; col++) {
-            let win = true;
-            for (let k = 0; k < 5; k++) {
-                if (board[row * BOARD_SIZE + col + k] !== player) win = false;
-            }
-            if (win) return true;
+
+function checkWin(board, player, lastIndex) {
+    const directions = [
+        { dx: 1, dy: 0 },  
+        { dx: 0, dy: 1 },   
+        { dx: 1, dy: 1 },  
+        { dx: 1, dy: -1 }   
+    ];
+    const row = Math.floor(lastIndex / BOARD_SIZE);
+    const col = lastIndex % BOARD_SIZE;
+
+    for (const {dx, dy} of directions) {
+        let count = 1;
+       
+        let r = row + dy, c = col + dx;
+        while (
+            r >= 0 && r < BOARD_SIZE &&
+            c >= 0 && c < BOARD_SIZE &&
+            board[r * BOARD_SIZE + c] === player
+        ) {
+            count++;
+            r += dy;
+            c += dx;
         }
-    }
-    for (let col = 0; col < BOARD_SIZE; col++) {
-        for (let row = 0; row <= BOARD_SIZE - 5; row++) {
-            let win = true;
-            for (let k = 0; k < 5; k++) {
-                if (board[(row + k) * BOARD_SIZE + col] !== player) win = false;
-            }
-            if (win) return true;
+        
+        r = row - dy;
+        c = col - dx;
+        while (
+            r >= 0 && r < BOARD_SIZE &&
+            c >= 0 && c < BOARD_SIZE &&
+            board[r * BOARD_SIZE + c] === player
+        ) {
+            count++;
+            r -= dy;
+            c -= dx;
         }
-    }
-    for (let row = 0; row <= BOARD_SIZE - 5; row++) {
-        for (let col = 0; col <= BOARD_SIZE - 5; col++) {
-            let win = true;
-            for (let k = 0; k < 5; k++) {
-                if (board[(row + k) * BOARD_SIZE + (col + k)] !== player) win = false;
-            }
-            if (win) return true;
-        }
-    }
-    for (let row = 0; row <= BOARD_SIZE - 5; row++) {
-        for (let col = 4; col < BOARD_SIZE; col++) {
-            let win = true;
-            for (let k = 0; k < 5; k++) {
-                if (board[(row + k) * BOARD_SIZE + (col - k)] !== player) win = false;
-            }
-            if (win) return true;
+        if (count >= 5) {
+            return true;
         }
     }
     return false;
@@ -188,10 +206,10 @@ function isDraw(board) {
     return !board.includes('');
 }
 
-// Show available rooms, only one waiting room per user
+
 async function showAvailableMatches(matches) {
     availableMatchesDiv.innerHTML = '';
-    // Only one room per user
+    
     const unique = {};
     for (const match of matches) {
         if (match.playerX !== userId && !unique[match.playerX]) {
@@ -213,18 +231,15 @@ async function joinSelectedMatch(id) {
     await joinMatch(id, userId);
     matchId = id;
     mySymbol = 'O';
+    renderBoard(Array(BOARD_SIZE * BOARD_SIZE).fill(''));
     startGame();
 }
 
 function updateTurnTimerDisplay() {
     let timerDiv = document.getElementById('turn-timer');
-    if (!timerDiv) {
-        timerDiv = document.createElement('div');
-        timerDiv.id = 'turn-timer';
-        statusDisplay.parentNode.insertBefore(timerDiv, statusDisplay.nextSibling);
-    }
+    if (!timerDiv) return;
     timerDiv.textContent = `Time left: ${turnTimeLeft}s`;
-    timerDiv.style.color = turnTimeLeft <= 5 ? '#f43f5e' : '#fbbf24';
+    timerDiv.style.color = turnTimeLeft <= 5 ? '#f43f5e' : '#2563eb';
 }
 
 function startTurnTimer() {
@@ -237,7 +252,7 @@ function startTurnTimer() {
         if (turnTimeLeft <= 0) {
             clearTurnTimer();
             if (matchData && matchData.turn === mySymbol && matchData.status === 'playing') {
-                // Timeout: set winner to opponent
+               
                 const winnerSymbol = mySymbol === 'X' ? 'O' : 'X';
                 await db.collection('matches').doc(matchId).update({ status: 'finished', winner: winnerSymbol });
             }
@@ -289,9 +304,9 @@ function startGame() {
     });
 }
 
-// Find match: only one waiting room per user
+
 findMatchBtn.onclick = async () => {
-    // Check if you already have a waiting room
+    
     const snapshot = await db.collection('matches')
         .where('playerX', '==', userId)
         .where('status', '==', 'waiting')
@@ -301,13 +316,15 @@ findMatchBtn.onclick = async () => {
         const doc = snapshot.docs[0];
         matchId = doc.id;
         mySymbol = 'X';
+        renderBoard(Array(BOARD_SIZE * BOARD_SIZE).fill(''));
         startGame();
         return;
     }
-    // If not, create a new one
+   
     const id = await createMatch(userId);
     matchId = id;
     mySymbol = 'X';
+    renderBoard(Array(BOARD_SIZE * BOARD_SIZE).fill(''));
     startGame();
 };
 
@@ -341,9 +358,10 @@ function autoLeaveRoom() {
     boardDiv.innerHTML = '';
     updateUserInfo();
     startListenMatches();
+    showBoardImage();
 }
 
-// Each player loses 0.1 prove when entering a match
+
 async function enterMatch() {
     let userSnap = await db.collection('users').doc(userId).get();
     let user = userSnap.data() || {};
@@ -360,14 +378,14 @@ async function enterMatch() {
     return true;
 }
 
-// Winner gets +0.2 prove, loser gets nothing (already lost 0.1 when entering)
+
 async function handleWinLose(isX) {
     let match = await db.collection('matches').doc(matchId).get();
     let data = match.data();
     let winnerId = isX ? data.playerX : data.playerO;
     let loserId = isX ? data.playerO : data.playerX;
 
-    // Update winner (+0.2 prove)
+   
     if (winnerId) {
         let winnerSnap = await db.collection('users').doc(winnerId).get();
         let winner = winnerSnap.data() || {};
@@ -391,7 +409,7 @@ async function handleWinLose(isX) {
         }
     }
 
-    // Update loser (prove unchanged)
+ 
     if (loserId) {
         let loserSnap = await db.collection('users').doc(loserId).get();
         let loser = loserSnap.data() || {};
@@ -412,7 +430,7 @@ async function handleWinLose(isX) {
     }
 }
 
-// Draw: only update total games, no prove change
+
 async function handleDraw() {
     let match = await db.collection('matches').doc(matchId).get();
     let data = match.data();
@@ -451,3 +469,18 @@ async function handleDraw() {
         }
     }
 }
+
+
+const gpuImages = [
+    'gpu-pink.png',
+    'gpu-blue.png',
+    'gpu-green.png',
+    'gpu-orange.png',
+    'gpu-purple.png'
+];
+setInterval(() => {
+    const img = document.getElementById('corner-theme-img');
+    if (!img) return;
+    const randomIndex = Math.floor(Math.random() * gpuImages.length);
+    img.src = gpuImages[randomIndex];
+}, 1111); 

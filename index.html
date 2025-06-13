@@ -5,8 +5,18 @@
     <title>Prove XO </title>
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
+   
+       <img src="sp1.png" alt="sp1" style="position:fixed; top:24px; right:24px; width:64px; height:auto; z-index:101;">
+       <img src="cr1.webp" alt="cr1" style="position:fixed; left:16px; top:40%; transform:translateY(-50%); width:64px; height:auto; z-index:101;">
+    <div style="display: flex; align-items: center; justify-content: center; margin: 24px auto 8px auto; max-width: 512px;">
+    <img src="cr.png" alt="Logo RMBGR" style="max-width:222px; max-height:222px;">
+    <div style="flex:1"></div>
+    <img src="logo rmbgr.png" alt="Logo RMBGR" style="max-width:64px; max-height:64px;">
     <h1>Prove XO </h1>
+    
+</div>
     <div id="login-area">
         <input id="username" placeholder="Username..." />
         <div style="margin: 10px 0;">
@@ -25,16 +35,17 @@
         <button id="login-btn" disabled>Join </button>
     </div>
     <div id="game-area" style="display:none;">
-        <div id="user-info"></div>
-        <div>
-            <button id="find-match">Find Game </button>
-            <div id="available-matches"></div>
-        </div>
-        <div id="status"></div>
-        <div id="turn-timer" style="font-weight:bold;margin-bottom:8px;"></div>
-        <div id="board" class="board"></div>
+         <div id="user-info"></div>
+    <button id="find-match">Find Game</button>
+    <div id="available-matches"></div>
+             <div style="display: flex; align-items: center; gap: 24px; margin-bottom: 16px;">
+                
+        <div id="turn-timer" style="font-weight:bold;"></div>
         <button id="leave-room" style="display:none;">Leave Room</button>
+         <div id="status" style="font-weight:bold; justify-content: flex-start;"></div>
     </div>
+        <img id="corner-theme-img" src="gpu-pink.png" alt="corner theme" class="corner-decor">
+<div id="board" class="board"></div>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
     <script src="firestore.js"></script>
