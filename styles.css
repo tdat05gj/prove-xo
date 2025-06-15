@@ -295,3 +295,30 @@ button:hover:not(:disabled) {
 .selected {
     outline: 3px solid #fbbf24 !important;
 }
+#promotion-choices button {
+    font-size: 2rem;
+    margin: 0 12px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 2px solid #a21272;
+    background: #ffecfa;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+#promotion-choices button:hover {
+    background: #61c3ff;
+    color: #fff;
+}
+#menu-xo {
+    text-decoration: none;
+}
+#menu-xo button {
+    text-decoration: none;
+}
+#prove-leaderboard th {
+    background: #a21272;
+    color: #fff;
+}
+#prove-leaderboard td {
+    color: #222;
+}

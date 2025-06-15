@@ -287,3 +287,134 @@ setInterval(() => {
     const randomIndex = Math.floor(Math.random() * gpuImages.length);
     img.src = gpuImages[randomIndex];
 }, 1111); 
+// ...existing code...
+
+// Kiểm tra đường đi không bị cản (cho xe, tượng, hậu)
+function isPathClear(board, from, to) {
+    const [fx, fy] = from, [tx, ty] = to;
+    const dx = Math.sign(tx - fx), dy = Math.sign(ty - fy);
+    let x = fx + dx, y = fy + dy;
+    while (x !== tx || y !== ty) {
+        if (board[x][y]) return false;
+        x += dx; y += dy;
+    }
+    return true;
+}
+
+
+function isValidMove(board, from, to, turnColor, isFirstMove) {
+    const [fx, fy] = from, [tx, ty] = to;
+    if (fx === tx && fy === ty) return false;
+    const piece = board[fx][fy];
+    if (!piece) return false;
+    const isWhite = piece === piece.toUpperCase();
+    if ((turnColor === 'white' && !isWhite) || (turnColor === 'black' && isWhite)) return false;
+    const dx = tx - fx, dy = ty - fy;
+    const target = board[tx][ty];
+    // Không ăn quân mình
+    if (target && ((isWhite && target === target.toUpperCase()) || (!isWhite && target === target.toLowerCase()))) return false;
+
+    switch (piece.toLowerCase()) {
+        case 'p': { // Pawn
+            let dir = isWhite ? -1 : 1;
+           
+            if (dy === 0 && !target) {
+                if (dx === dir) return true;
+                if (isFirstMove && dx === 2*dir && !board[fx+dir][fy]) return true;
+            }
+            // Ăn chéo
+            if (Math.abs(dy) === 1 && dx === dir && target) return true;
+            return false;
+        }
+        case 'r': // Rook
+            if (dx !== 0 && dy !== 0) return false;
+            return isPathClear(board, from, to);
+        case 'n': // Knight
+            return (Math.abs(dx) === 2 && Math.abs(dy) === 1) || (Math.abs(dx) === 1 && Math.abs(dy) === 2);
+        case 'b': // Bishop
+            if (Math.abs(dx) !== Math.abs(dy)) return false;
+            return isPathClear(board, from, to);
+        case 'q': // Queen
+            if (dx === 0 || dy === 0 || Math.abs(dx) === Math.abs(dy)) {
+                return isPathClear(board, from, to);
+            }
+            return false;
+        case 'k': // King
+            return Math.abs(dx) <= 1 && Math.abs(dy) <= 1;
+        default: return false;
+    }
+}
+
+
+function showPromotionModal(isWhite, callback) {
+    const modal = document.getElementById('promotion-modal');
+    const choices = document.getElementById('promotion-choices');
+    choices.innerHTML = '';
+    const pieces = isWhite ? ['Q','R','B','N'] : ['q','r','b','n'];
+    pieces.forEach(p => {
+        const btn = document.createElement('button');
+        btn.textContent = PIECES[p];
+        btn.onclick = () => {
+            modal.style.display = 'none';
+            callback(p);
+        };
+        choices.appendChild(btn);
+    });
+    modal.style.display = 'flex';
+}
+
+
+
+window.selectCell = async function(i, j) {
+    if (!chessMatchData || chessMatchData.status !== 'playing') return;
+    if (chessMatchData.turn !== myColor) return;
+    let board2D = getBoard2D(chessMatchData.board);
+    if (selected) {
+        let [fx, fy] = selected, [tx, ty] = [i, j];
+        let piece = board2D[fx][fy];
+        let isPawn = piece.toLowerCase() === 'p';
+        let isFirstMove = false;
+        if (isPawn) {
+            isFirstMove = (piece === 'P' && fx === 6) || (piece === 'p' && fx === 1);
+        }
+        if (isValidMove(board2D, [fx, fy], [tx, ty], myColor, isFirstMove)) {
+            let newBoard = chessMatchData.board.slice();
+           
+            if (isPawn && ((piece === 'P' && tx === 0) || (piece === 'p' && tx === 7))) {
+                showPromotionModal(piece === 'P', async (promoteTo) => {
+                    newBoard[tx*8 + ty] = promoteTo;
+                    newBoard[fx*8 + fy] = '';
+                    let winner = '';
+                    if (!newBoard.includes('k')) winner = 'white';
+                    if (!newBoard.includes('K')) winner = 'black';
+                    await updateDoc(doc(db, "chess_matches", chessMatchId), {
+                        board: newBoard,
+                        turn: winner ? '' : (myColor === 'white' ? 'black' : 'white'),
+                        status: winner ? 'finished' : 'playing',
+                        winner: winner
+                    });
+                });
+            } else {
+                newBoard[tx*8 + ty] = piece;
+                newBoard[fx*8 + fy] = '';
+                let winner = '';
+                if (!newBoard.includes('k')) winner = 'white';
+                if (!newBoard.includes('K')) winner = 'black';
+                await updateDoc(doc(db, "chess_matches", chessMatchId), {
+                    board: newBoard,
+                    turn: winner ? '' : (myColor === 'white' ? 'black' : 'white'),
+                    status: winner ? 'finished' : 'playing',
+                    winner: winner
+                });
+            }
+        }
+        selected = null;
+        renderChessboard();
+    } else if (board2D[i][j]) {
+        if (myColor === 'white' && board2D[i][j] === board2D[i][j].toUpperCase() ||
+            myColor === 'black' && board2D[i][j] === board2D[i][j].toLowerCase()) {
+            selected = [i, j];
+            renderChessboard();
+        }
+    }
+};
