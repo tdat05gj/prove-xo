@@ -2,15 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Chess</title>
+    <title>Chess Event</title>
     <link rel="stylesheet" href="styles.css">
-    <!-- Firebase SDK -->
-    <script type="module" src="https://www.gstatic.com/firebasejs/10.11.1/firebase-app-compat.js"></script>
-    <script type="module" src="https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore-compat.js"></script>
     <style>
         body {
             min-height: 100vh;
             background: linear-gradient(135deg, #ffe0f7 0%, #c1eaff 100%);
+            font-family: 'Segoe UI', Arial, sans-serif;
         }
         .header-flex {
             display: flex;
@@ -18,7 +16,7 @@
             justify-content: center;
             gap: 24px;
             margin: 32px auto 8px auto;
-            max-width: 600px;
+            max-width: 700px;
         }
         .header-flex img.logo-main {
             max-width: 120px;
@@ -28,14 +26,47 @@
             max-width: 48px;
             max-height: 48px;
         }
-        h1 {
-            margin: 0 0 0 12px;
+        .header-title {
+            flex: 1;
+            text-align: center;
+        }
+        h1, h2 {
+            margin: 0;
             font-size: 2.2rem;
             color: #a21272;
             letter-spacing: 2px;
             font-family: 'Segoe UI', Arial, sans-serif;
         }
-        #user-info {
+        #event-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin: 24px auto 16px auto;
+            flex-wrap: wrap;
+        }
+        #event-controls input {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid #a21272;
+            font-size: 1rem;
+        }
+        #event-controls button {
+            background: linear-gradient(90deg, #ff54d7 0%, #61c3ff 100%);
+            color: #fff;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 18px;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+            transition: background 0.2s;
+        }
+        #event-controls button:hover {
+            background: linear-gradient(90deg, #61c3ff 0%, #ff54d7 100%);
+        }
+        #team-info {
             text-align: center;
             font-size: 1.1rem;
             color: #a21272;
@@ -43,78 +74,74 @@
             margin: 8px 0 12px 0;
             text-shadow: 0 1px 4px #fff8;
         }
-        #chess-controls {
+        .tab-bar {
             display: flex;
             justify-content: center;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 12px;
-            flex-wrap: wrap;
+            gap: 16px;
+            margin: 12px 0 16px 0;
         }
-        #chess-controls input {
-            padding: 8px 12px;
-            border-radius: 8px;
-            border: 1px solid #a21272;
-            font-size: 1rem;
-        }
-        #chess-controls button {
-            background: linear-gradient(90deg, #ff54d7 0%, #61c3ff 100%);
-            color: #fff;
-            font-weight: 600;
-            border: none;
-            border-radius: 8px;
-            padding: 8px 18px;
-            font-size: 1rem;
+        .tab {
             cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.10);
-            transition: background 0.2s;
+            font-weight: bold;
+            color: #a21272;
+            padding: 4px 12px;
+            border-radius: 6px;
+            transition: background 0.2s, color 0.2s;
         }
-        #chess-controls button:hover {
-            background: linear-gradient(90deg, #61c3ff 0%, #ff54d7 100%);
+        .tab.active {
+            background: #ffe0f7;
+            color: #e91e63;
+            text-decoration: underline;
         }
-        .status {
-            text-align: center;
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 12px;
+        #leaderboard-section {
+            margin: 32px auto 0 auto;
+            max-width: 600px;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 2px 16px #0001;
+            padding: 18px 28px;
+        }
+        #leaderboard-section h3 {
+            margin-top: 0;
             color: #a21272;
         }
-        #chessboard {
+        #leaderboard-section ol {
+            padding-left: 24px;
+        }
+        #leaderboard-section li {
+            font-size: 1.1rem;
+            margin-bottom: 6px;
+        }
+        #match-area {
             margin: 0 auto 24px auto;
-            display: flex;
-            justify-content: center;
+            max-width: 600px;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 2px 16px #0001;
+            padding: 18px 28px;
         }
-        #menu-xo {
-            display: flex;
-            justify-content: center;
-            margin: 24px auto 0 auto;
-            width: fit-content;
+        #timer {
+            text-align: center;
+            font-weight: bold;
+            color: #e91e63;
+            margin: 8px 0;
         }
-        #menu-xo button {
+        .pair-btn {
+            margin-left: 12px;
+            padding: 4px 12px;
+            border-radius: 6px;
+            border: none;
             background: linear-gradient(90deg, #61c3ff 0%, #ff54d7 100%);
             color: #fff;
             font-weight: 600;
-            border: none;
-            border-radius: 8px;
-            padding: 8px 18px;
-            font-size: 1rem;
             cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.10);
             transition: background 0.2s;
         }
-        #menu-xo button:hover {
+        .pair-btn:hover {
             background: linear-gradient(90deg, #ff54d7 0%, #61c3ff 100%);
         }
+        /* Góc trang */
         #corner-theme-img {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            width: 72px;
-            height: auto;
-            z-index: 101;
-            opacity: 0.85;
-        }
-        .corner-decor {
             position: fixed;
             bottom: 24px;
             right: 24px;
@@ -140,6 +167,10 @@
             height: auto;
             z-index: 101;
         }
+        @media (max-width: 700px) {
+            .header-flex { flex-direction: column; gap: 8px; }
+            #leaderboard-section, #match-area { padding: 10px 4vw; }
+        }
     </style>
 </head>
 <body>
@@ -148,31 +179,28 @@
     <img id="corner-theme-img" src="gpu-pink.png" alt="corner theme" class="corner-decor">
 
     <div class="header-flex">
-         <img src="logo rmbgr.png" alt="Logo RMBGR" class="logo-small">
-        <h1>Prove Chess</h1>
         <img src="cr.png" alt="Logo RMBGR" class="logo-main">
+        <div class="header-title">
+            <h1>Chess Event</h1>
+        </div>
+        <img src="logo rmbgr.png" alt="Logo RMBGR" class="logo-small">
     </div>
 
-    <div id="user-info"></div>
+    <div id="event-controls">
+        <label>Enter code: <input id="join-code" type="text" style="text-transform:uppercase" /></label>
+        <button id="join-btn">Join Team</button>
+    </div>
+    <div id="team-info"></div>
 
-    <div id="chess-controls">
-        <button id="chess-create">Create a room</button>
-        <button id="chess-join">Join</button>
-        <input id="chess-matchid" placeholder="ID ">
+    <div class="tab-bar">
+        <span class="tab active" id="tab-week">Week</span>
+        <span class="tab" id="tab-month">Month</span>
+        <span class="tab" id="tab-year">Year</span>
     </div>
 
-    <div class="status" id="chess-status"></div>
-    <div id="timer" style="text-align:center;font-weight:bold;color:#e91e63;margin:8px 0;"></div>
-    <div id="chessboard"></div>
-
-    <a href="index.html" id="menu-xo"><button type="button">Tic Tac Toe</button></a>
-    <a href="chessevent.html" id="menu-xo"><button type="button">Chess Event</button></a>
-    <script type="module" src="app1.js"></script>
-    <div id="promotion-modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:#0008; z-index:999; align-items:center; justify-content:center;">
-      <div style="background:#fff; border-radius:12px; padding:24px 32px; box-shadow:0 2px 16px #0004; text-align:center;">
-        <div style="font-size:1.2rem; margin-bottom:12px;">Choose promotion piece:</div>
-        <div id="promotion-choices"></div>
-      </div>
-    </div>
+    <div id="leaderboard-section"></div>
+    <div id="match-area"></div>
+    <div id="timer"></div>
+    <script type="module" src="chessevent.js"></script>
 </body>
 </html>
