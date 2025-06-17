@@ -12,13 +12,13 @@ import { getFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot, increment } f
 
 // --- Firebase config ---
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY1,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN1,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID1,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET1,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID1,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID1,
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID1
+  apiKey: process.env.FIREBASE_API_KEY1,
+  authDomain: process.env.FIREBASE_AUTH_DOMAIN1,
+  projectId: process.env.FIREBASE_PROJECT_ID1,
+  storageBucket: process.env.FIREBASE_STORAGE_BUCKET1,
+  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID1,
+  appId: process.env.FIREBASE_APP_ID1,
+  measurementId: process.env.VITE_FIREBASE_MEASUREMENT_ID1
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);

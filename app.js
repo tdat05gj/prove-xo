@@ -1,7 +1,4 @@
-export const db = getFirestore(app);
 
-// app.js
-import { db } from './firestore.js';
 const boardDiv = document.getElementById('board');
 const statusDisplay = document.getElementById('status');
 const resetButton = document.getElementById('reset');
