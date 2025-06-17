@@ -1,3 +1,4 @@
+
 //gjteam
 //gjteam
 //gjteam
@@ -9978,7 +9979,7 @@ const firebaseConfig = {
 //gjteam
 //gjteam
 //gjteam
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  apiKey: "AIzaSyCHGpG3Bntw1QsYou1v5tXS2OY4JZHE4P4",
    //gjteam
 //gjteam
 //gjteam
@@ -12111,7 +12112,7 @@ const firebaseConfig = {
 //gjteam
 //gjteam
 
- authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  authDomain: "xogame-2396f.firebaseapp.com",
    //gjteam
 //gjteam
 //gjteam
@@ -12254,7 +12255,7 @@ const firebaseConfig = {
 //gjteam
 //gjteam
 //gjteam
-   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  projectId: "xogame-2396f",
    //gjteam
 //gjteam
 //gjteam
@@ -13106,7 +13107,7 @@ const firebaseConfig = {
 //gjteam
 //gjteam
 //gjteam
-   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  storageBucket: "xogame-2396f.firebasestorage.app",
    //gjteam
 //gjteam
 //gjteam
@@ -13675,7 +13676,7 @@ const firebaseConfig = {
 //gjteam
 //gjteam
 //gjteam
- messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  messagingSenderId: "928029596000",
    //gjteam
 //gjteam
 //gjteam
@@ -14102,8 +14103,8 @@ const firebaseConfig = {
 //gjteam
 //gjteam
 //gjteam
-   appId: import.meta.env.VITE_FIREBASE_APP_ID,
- measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
+  appId: "1:928029596000:web:05d800db8c3dcdd00ce605",
+  measurementId: "G-7CPDYF20F6"
 };
 
 firebase.initializeApp(firebaseConfig);
