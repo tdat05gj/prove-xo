@@ -12,13 +12,13 @@ import { getFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot, increment } f
 
 // --- Firebase config ---
 const firebaseConfig = {
-  apiKey: process.env.FIREBASE_API_KEY1,
-  authDomain: process.env.FIREBASE_AUTH_DOMAIN1,
-  projectId: process.env.FIREBASE_PROJECT_ID1,
-  storageBucket: process.env.FIREBASE_STORAGE_BUCKET1,
-  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID1,
-  appId: process.env.FIREBASE_APP_ID1,
-  measurementId: process.env.VITE_FIREBASE_MEASUREMENT_ID1
+  apiKey: "AIzaSyC5gM3sNfJnR88EilMA5EBG8qdxt5NSOjQ",
+  authDomain: "chess-9bfbb.firebaseapp.com",
+  projectId: "chess-9bfbb",
+  storageBucket: "chess-9bfbb.firebasestorage.app",
+  messagingSenderId: "296757639984",
+  appId: "1:296757639984:web:6a8933a6066222891be6f5",
+  measurementId: "G-22T10D2S36"
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
